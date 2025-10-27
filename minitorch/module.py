@@ -4,11 +4,11 @@ from typing import Any, Dict, Optional, Sequence, Tuple
 
 
 class Module:
-    """
-    Modules form a tree that store parameters and other
+    """Modules form a tree that store parameters and other
     submodules. They make up the basis of neural network stacks.
 
-    Attributes:
+    Attributes
+    ----------
         _modules : Storage of the child modules
         _parameters : Storage of the module's parameters
         training : Whether the module is in training mode or evaluation mode
@@ -25,42 +25,69 @@ class Module:
         self.training = True
 
     def modules(self) -> Sequence[Module]:
-        "Return the direct child modules of this module."
+        """Return the direct child modules of this module."""
         m: Dict[str, Module] = self.__dict__["_modules"]
         return list(m.values())
 
     def train(self) -> None:
-        "Set the mode of this module and all descendent modules to `train`."
-        raise NotImplementedError("Need to include this file from past assignment.")
+        """Set the mode of this module and all descendant modules to `train`."""
+        self.training = True
+        for _, child in self._modules.items():
+            child.train()
 
     def eval(self) -> None:
-        "Set the mode of this module and all descendent modules to `eval`."
-        raise NotImplementedError("Need to include this file from past assignment.")
+        """Set the mode of this module and all descendent modules to `eval`."""
+        self.training = False
+        for _, child in self._modules.items():
+            child.eval()
 
     def named_parameters(self) -> Sequence[Tuple[str, Parameter]]:
-        """
-        Collect all the parameters of this module and its descendents.
+        """Collect all the parameters of this module and its descendents.
 
-
-        Returns:
+        Returns
+        -------
             The name and `Parameter` of each ancestor parameter.
+
         """
-        raise NotImplementedError("Need to include this file from past assignment.")
+        result: list[Tuple[str, Parameter]] = []
+
+        def _walk(node: Module, path: list[str]) -> None:
+            # first collect the parameters of the current node
+            for p_name, param in node._parameters.items():
+                full_name = ".".join([*path, p_name]) if path else p_name
+                result.append((full_name, param))
+            # then Re-recursive submodule
+            for m_name, child in node._modules.items():
+                _walk(child, path + [m_name])
+
+        _walk(self, [])
+        return result
 
     def parameters(self) -> Sequence[Parameter]:
-        "Enumerate over all the parameters of this module and its descendents."
-        raise NotImplementedError("Need to include this file from past assignment.")
+        """Enumerate over all the parameters of this module and its descendents."""
+        result: list[Parameter] = []
+
+        def _walk(node: Module) -> None:
+            for _, param in node._parameters.items():
+                result.append(param)
+            for _, child in node._modules.items():
+                _walk(child)
+
+        _walk(self)
+        return result
 
     def add_parameter(self, k: str, v: Any) -> Parameter:
-        """
-        Manually add a parameter. Useful helper for scalar parameters.
+        """Manually add a parameter. Useful helper for scalar parameters.
 
         Args:
+        ----
             k: Local name of the parameter.
             v: Value for the parameter.
 
         Returns:
+        -------
             Newly created parameter.
+
         """
         val = Parameter(v, k)
         self.__dict__["_parameters"][k] = val
@@ -82,7 +109,7 @@ class Module:
             return self.__dict__["_modules"][key]
         return None
 
-    def __call__(self, *args: Any, **kwargs: Any) -> Any:
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:  # noqa: D102
         return self.forward(*args, **kwargs)
 
     def __repr__(self) -> str:
@@ -114,8 +141,7 @@ class Module:
 
 
 class Parameter:
-    """
-    A Parameter is a special container stored in a `Module`.
+    """A Parameter is a special container stored in a `Module`.
 
     It is designed to hold a `Variable`, but we allow it to hold
     any value for testing.
@@ -130,7 +156,7 @@ class Parameter:
                 self.value.name = self.name
 
     def update(self, x: Any) -> None:
-        "Update the parameter value."
+        """Update the parameter value."""
         self.value = x
         if hasattr(x, "requires_grad_"):
             self.value.requires_grad_(True)
