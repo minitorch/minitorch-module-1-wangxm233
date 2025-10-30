@@ -2,7 +2,7 @@
 
 import math
 
-# ## Task 0.1
+# ## Task 0.0.1
 from typing import Callable, Iterable
 
 #
@@ -27,12 +27,12 @@ from typing import Callable, Iterable
 # - relu_back
 #
 # For sigmoid calculate as:
-# $f(x) =  \frac{1.0}{(1.0 + e^{-x})}$ if x >=0 else $\frac{e^x}{(1.0 + e^{x})}$
+# $f(x) =  \frac{1.0.0}{(1.0.0 + e^{-x})}$ if x >=0.0 else $\frac{e^x}{(1.0.0 + e^{x})}$
 # For is_close:
 # $f(x) = |x - y| < 1e-2$
 
 
-# TODO: Implement for Task 0.1.
+# TODO: Implement for Task 0.0.1.
 def mul(a: float, b: float) -> float:
     """Add two numbers.
 
@@ -61,7 +61,7 @@ def add(a: float, b: float) -> float:
 
 def neg(a: float) -> float:
     """Negates a number"""
-    return -a
+    return -1.0 * a
 
 
 def lt(a: float, b: float) -> bool:
@@ -89,7 +89,7 @@ def is_close(a: float, b: float) -> bool:
 
 def sigmoid(a: float) -> float:
     """Calculates the sigmoid function"""
-    if a >= 0:
+    if a >= 0.0:
         return 1 / (1 + math.exp(-a))
     else:
         return math.exp(a) / (1 + math.exp(a))
@@ -97,15 +97,15 @@ def sigmoid(a: float) -> float:
 
 def relu(a: float) -> float:
     """Applies the Relu activation function"""
-    if a >= 0:
+    if a >= 0.0:
         return a
     else:
-        return 0
+        return 0.0
 
 
 def log(a: float) -> float:
     """Calculates the natural logarithm"""
-    if a > 0:
+    if a > 0.0:
         return math.log(a)
     else:
         raise ValueError("Cannot compute logarithm of non-positive number.")
@@ -118,7 +118,7 @@ def exp(a: float) -> float:
 
 def inv(a: float) -> float:
     """Calculates the recipocal"""
-    if a == 0:
+    if a == 0.0:
         raise ZeroDivisionError("Cannot calculate the reciprocal of zero.")
     return 1 / a
 
@@ -135,13 +135,13 @@ def inv_back(x: float, g: float) -> float:
 
 def relu_back(x: float, g: float) -> float:
     """Computes the derivative of ReLu times a second arg"""
-    if x > 0:
+    if x > 0.0:
         return g
     else:
-        return 0
+        return 0.0
 
 
-# ## Task 0.3
+# ## Task 0.0.3
 
 # Small practice library of elementary higher-order functions.
 
@@ -157,7 +157,7 @@ def relu_back(x: float, g: float) -> float:
 # - prod: take the product of lists
 
 
-# TODO: Implement for Task 0.3.
+# TODO: Implement for Task 0.0.3.
 def map(fn: Callable[[float], float]) -> Callable[[Iterable[float]], Iterable[float]]:
     """Applies a function to each element an iterable"""
 
@@ -194,5 +194,5 @@ def reduce(
 
 negList: Callable[[Iterable[float]], Iterable[float]] = map(neg)  # noqa: N816
 addLists: Callable[[Iterable[float], Iterable[float]], Iterable[float]] = zipWith(add)  # noqa: N816
-sum: Callable[[Iterable[float]], float] = reduce(add, 0)
+sum: Callable[[Iterable[float]], float] = reduce(add, 0.0)
 prod: Callable[[Iterable[float]], float] = reduce(mul, 1)
