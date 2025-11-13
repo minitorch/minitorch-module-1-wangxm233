@@ -104,15 +104,14 @@ class Mul(ScalarFunction):
     @staticmethod
     def forward(ctx: Context, a: float, b: float) -> float:
         # TODO: Implement for Task 1.2.
-        ctx.save_for_backward(a,b)
+        ctx.save_for_backward(a, b)
         return a * b
 
     @staticmethod
     def backward(ctx: Context, d_output: float) -> Tuple[float, float]:
         # TODO: Implement for Task 1.4.
-        (a,b) = ctx.saved_values
-        return b * d_output, a * d_output 
-
+        (a, b) = ctx.saved_values
+        return b * d_output, a * d_output
 
 
 class Inv(ScalarFunction):
@@ -128,7 +127,7 @@ class Inv(ScalarFunction):
     def backward(ctx: Context, d_output: float) -> float:
         # TODO: Implement for Task 1.4.
         (a,) = ctx.saved_values
-        return operators.inv_back(a,d_output)
+        return operators.inv_back(a, d_output)
 
 
 class Neg(ScalarFunction):
@@ -138,11 +137,12 @@ class Neg(ScalarFunction):
     def forward(ctx: Context, a: float) -> float:
         # TODO: Implement for Task 1.2.
         return operators.neg(a)
-    
+
     @staticmethod
     def backward(ctx: Context, d_output: float) -> float:
         # TODO: Implement for Task 1.4.
         return -1.0 * d_output
+
 
 class Sigmoid(ScalarFunction):
     "Sigmoid function"
@@ -159,7 +159,7 @@ class Sigmoid(ScalarFunction):
         (a,) = ctx.saved_values
         s = operators.sigmoid(a)
         return d_output * s * (1 - s)
-        
+
 
 class ReLU(ScalarFunction):
     "ReLU function"
@@ -174,7 +174,8 @@ class ReLU(ScalarFunction):
     def backward(ctx: Context, d_output: float) -> float:
         # TODO: Implement for Task 1.4.
         (a,) = ctx.saved_values
-        return operators.relu_back(a,d_output)
+        return operators.relu_back(a, d_output)
+
 
 class Exp(ScalarFunction):
     "Exp function"
@@ -189,7 +190,8 @@ class Exp(ScalarFunction):
     def backward(ctx: Context, d_output: float) -> float:
         # TODO: Implement for Task 1.4.
         (a,) = ctx.saved_values
-        return d_output * operators.exp(a) 
+        return d_output * operators.exp(a)
+
 
 class LT(ScalarFunction):
     "Less-than function $f(x) =$ 1.0 if x is less than y else 0.0"
@@ -197,12 +199,13 @@ class LT(ScalarFunction):
     @staticmethod
     def forward(ctx: Context, a: float, b: float) -> float:
         # TODO: Implement for Task 1.2.
-        return float(operators.lt(a,b))
+        return float(operators.lt(a, b))
 
     @staticmethod
     def backward(ctx: Context, d_output: float) -> Tuple[float, float]:
         # TODO: Implement for Task 1.4.
-        return 0.0,0.0
+        return 0.0, 0.0
+
 
 class EQ(ScalarFunction):
     "Equal function $f(x) =$ 1.0 if x is equal to y else 0.0"
@@ -210,8 +213,9 @@ class EQ(ScalarFunction):
     @staticmethod
     def forward(ctx: Context, a: float, b: float) -> float:
         # TODO: Implement for Task 1.2.
-        return float(operators.eq(a,b))
+        return float(operators.eq(a, b))
+
     @staticmethod
     def backward(ctx: Context, d_output: float) -> Tuple[float, float]:
         # TODO: Implement for Task 1.4.
-        return 0.0,0.0
+        return 0.0, 0.0

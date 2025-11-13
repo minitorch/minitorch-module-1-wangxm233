@@ -93,26 +93,26 @@ class Scalar:
 
     def __add__(self, b: ScalarLike) -> Scalar:
         # TODO: Implement for Task 1.2.
-        return Add.apply(self,b) 
+        return Add.apply(self, b)
 
     def __bool__(self) -> bool:
         return bool(self.data)
 
     def __lt__(self, b: ScalarLike) -> Scalar:
         # TODO: Implement for Task 1.2.
-        return LT.apply(self,b)
+        return LT.apply(self, b)
 
     def __gt__(self, b: ScalarLike) -> Scalar:
         # TODO: Implement for Task 1.2.
-        return LT.apply(b,self)
+        return LT.apply(b, self)
 
     def __eq__(self, b: ScalarLike) -> Scalar:  # type: ignore[override]
         # TODO: Implement for Task 1.2.
-        return EQ.apply(self,b)
+        return EQ.apply(self, b)
 
     def __sub__(self, b: ScalarLike) -> Scalar:
         # TODO: Implement for Task 1.2.
-        return Add.apply(self,Neg.apply(b))
+        return Add.apply(self, Neg.apply(b))
 
     def __neg__(self) -> Scalar:
         # TODO: Implement for Task 1.2.
@@ -172,8 +172,8 @@ class Scalar:
         assert h is not None
         assert h.last_fn is not None
         assert h.ctx is not None
-        derivs = h.last_fn._backward(h.ctx,d_output)
-        return list(zip(h.inputs,derivs))
+        derivs = h.last_fn._backward(h.ctx, d_output)
+        return list(zip(h.inputs, derivs))
 
     def backward(self, d_output: Optional[float] = None) -> None:
         """
