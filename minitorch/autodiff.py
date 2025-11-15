@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Iterable, List, Tuple
+from typing import Any, Iterable, Tuple
 
 from typing_extensions import Protocol
 
@@ -23,7 +23,13 @@ def central_difference(f: Any, *vals: Any, arg: int = 0, epsilon: float = 1e-6) 
         An approximation of $f'_i(x_0, \ldots, x_{n-1})$
     """
     # TODO: Implement for Task 1.1.
-    raise NotImplementedError("Need to implement for Task 1.1")
+    vals_p = list(vals)
+    vals_m = list(vals)
+    vals_p[arg] += epsilon
+    vals_m[arg] -= epsilon
+    f_plus = f(*vals_p)
+    f_minus = f(*vals_m)
+    return (f_plus - f_minus) / (2 * epsilon)
 
 
 variable_count = 1
@@ -34,21 +40,16 @@ class Variable(Protocol):
         pass
 
     @property
-    def unique_id(self) -> int:
-        pass
+    def unique_id(self) -> int: ...
 
-    def is_leaf(self) -> bool:
-        pass
+    def is_leaf(self) -> bool: ...
 
-    def is_constant(self) -> bool:
-        pass
+    def is_constant(self) -> bool: ...
 
     @property
-    def parents(self) -> Iterable["Variable"]:
-        pass
+    def parents(self) -> Iterable["Variable"]: ...
 
-    def chain_rule(self, d_output: Any) -> Iterable[Tuple["Variable", Any]]:
-        pass
+    def chain_rule(self, d_output: Any) -> Iterable[Tuple["Variable", Any]]: ...
 
 
 def topological_sort(variable: Variable) -> Iterable[Variable]:
@@ -62,7 +63,25 @@ def topological_sort(variable: Variable) -> Iterable[Variable]:
         Non-constant Variables in topological order starting from the right.
     """
     # TODO: Implement for Task 1.4.
-    raise NotImplementedError("Need to implement for Task 1.4")
+    topo_queue = []
+    topo_set = set()
+
+    def visit(node: Variable) -> None:
+        if node.unique_id in topo_set:
+            return
+        if node.is_constant():
+            return
+        if node.is_leaf():
+            topo_set.add(node.unique_id)
+            topo_queue.append(node)
+            return
+        for parent in node.parents:
+            visit(parent)
+        topo_set.add(node.unique_id)
+        topo_queue.append(node)
+
+    visit(variable)
+    return topo_queue
 
 
 def backpropagate(variable: Variable, deriv: Any) -> None:
@@ -77,8 +96,17 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
     No return. Should write to its results to the derivative values of each leaf through `accumulate_derivative`.
     """
     # TODO: Implement for Task 1.4.
-    raise NotImplementedError("Need to implement for Task 1.4")
-
+    topo_queue = topological_sort(variable)
+    deriv_dict = {node.unique_id: 0.0 for node in topo_queue}
+    deriv_dict[variable.unique_id] = deriv
+    for node in reversed(list(topo_queue)):
+        if node.is_leaf():
+            node.accumulate_derivative(deriv_dict[node.unique_id])
+        else:
+            back = node.chain_rule(deriv_dict[node.unique_id])
+            for child_node, child_deriv in back:
+                if child_node.unique_id in deriv_dict:
+                    deriv_dict[child_node.unique_id] += child_deriv
 
 @dataclass
 class Context:

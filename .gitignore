@@ -130,3 +130,9 @@ dmypy.json
 *.\#*
 data/
 pyodide
+
+#pdm related
+pdm.lock
+.pdm-python
+pyproject.toml
+constraints.txt
