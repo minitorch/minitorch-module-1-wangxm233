@@ -104,10 +104,9 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
             node.accumulate_derivative(deriv_dict[node.unique_id])
         else:
             back = node.chain_rule(deriv_dict[node.unique_id])
-            for parent_node, parent_deriv in back:
-                if parent_node.unique_id in deriv_dict:
-                    deriv_dict[parent_node.unique_id] += parent_deriv
-
+            for child_node, child_deriv in back:
+                if child_node.unique_id in deriv_dict:
+                    deriv_dict[child_node.unique_id] += child_deriv
 
 @dataclass
 class Context:
